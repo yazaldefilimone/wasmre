@@ -4,22 +4,22 @@ use crate::lexer::tokens::Range;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Program {
-  pub module: Module,
+  body: Vec<Module>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Module {
-  pub types: Vec<Type>,
-  pub imports: Vec<Import>,
-  pub functions: Vec<Function>,
-  pub tables: Vec<Table>,
-  pub memories: Vec<Memory>,
-  pub globals: Vec<Global>,
-  pub exports: Vec<Export>,
+  pub types: Type,
+  pub imports: Import,
+  pub functions: Function,
+  pub tables: Table,
+  pub memories: Memory,
+  pub globals: Global,
+  pub exports: Export,
   pub start: Option<Start>,
-  pub elements: Vec<Element>,
-  pub codes: Vec<Code>,
-  pub data: Vec<Data>,
+  pub elements: Element,
+  pub codes: Code,
+  pub data: Data,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -48,9 +48,22 @@ pub enum ImportDesc {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Function {
-  pub type_idx: u32,
-  pub locals: Vec<Local>,
-  pub body: Vec<Instr>,
+  pub name: Identifier,
+  pub signature: Signature,
+  pub body: BlockInstr,
+  pub range: Range,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Signature {
+  pub params: Vec<ValueType>,
+  pub results: Vec<ValueType>,
+  pub range: Range,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Identifier {
+  pub name: String,
   pub range: Range,
 }
 
@@ -200,7 +213,6 @@ pub enum Instr {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct BlockInstr {
-  pub block_type: Option<ValueType>,
   pub instr: Vec<Instr>,
   pub range: Range,
 }

@@ -9,13 +9,21 @@ pub struct Lexer<'a> {
   cursor: usize,
   pub file_name: &'a str,
   start_cursor: usize,
+  cached_token: Option<Token>,
 }
 
 impl<'a> Lexer<'a> {
   pub fn new(raw: &'a str, file_name: &'a str) -> Self {
-    Self { raw, cursor: 0, file_name, start_cursor: 0 }
+    Self { raw, cursor: 0, file_name, start_cursor: 0, cached_token: None }
+  }
+
+  pub fn peek_token(&mut self) -> Token {
+    let token = self.cached_token.clone().unwrap_or_else(|| self.next_token());
+    self.cached_token = Some(token.clone());
+    token
   }
   pub fn next_token(&mut self) -> Token {
+    self.cached_token = None;
     self.start_cursor = self.cursor;
     self.skip_whitespace();
     if self.is_end() {
@@ -124,7 +132,7 @@ impl<'a> Lexer<'a> {
     self.advance_many(expected.len());
   }
 
-  pub fn read_while(&mut self, predicate: fn(char) -> bool) -> String {
+  fn read_while(&mut self, predicate: fn(char) -> bool) -> String {
     let mut result = String::new();
     while !self.is_end() && predicate(self.peek_one()) {
       let character = self.consume_char();
