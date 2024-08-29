@@ -1,10 +1,16 @@
 use serde::{Deserialize, Serialize};
 
-use crate::lexer::tokens::Range;
+use crate::utils::range::Range;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Program {
-  body: Vec<Module>,
+  pub body: Vec<Module>,
+}
+
+impl Default for Program {
+  fn default() -> Self {
+    Self { body: vec![] }
+  }
 }
 
 #[derive(Debug, Serialize, Deserialize)]

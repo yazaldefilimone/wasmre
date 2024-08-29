@@ -7,3 +7,12 @@ edition = "2021"
 code_highlighter = "0.1.1"
 serde = { version = "1.0.204", features = ["derive"] }
 clap = { version = "4.5.9", features = ["derive"] }
+anyhow = "1.0.71"
+nom = "7.1.3"
+nom-leb128 = "0.2.0"
+num-derive = "0.4.0"
+num-traits = "0.2.15"
+
+[dev-dependencies]
+wat = "=1.0.67"
+pretty_assertions = "1.4.0"

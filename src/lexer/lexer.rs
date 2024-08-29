@@ -1,7 +1,8 @@
 #![allow(dead_code)]
+use crate::utils::range::Range;
 use crate::{diagnostics::report_lexer_diagnostics, utils::match_number};
 
-use super::tokens::{Range, Token};
+use super::tokens::Token;
 use crate::lexer::tokens::TokenKind;
 
 pub struct Lexer<'a> {
@@ -147,7 +148,7 @@ impl<'a> Lexer<'a> {
     }
   }
 
-  fn is_end(&self) -> bool {
+  pub fn is_end(&self) -> bool {
     self.cursor >= self.raw.len()
   }
 

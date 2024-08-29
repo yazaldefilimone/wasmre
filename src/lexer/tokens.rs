@@ -1,6 +1,8 @@
 #![allow(dead_code)]
 use serde::{Deserialize, Serialize};
 
+use crate::utils::range::Range;
+
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 pub enum TokenKind {
   LParen,             // '('
@@ -44,17 +46,6 @@ pub enum TokenKind {
   EOF,                // end of file
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Range {
-  pub start: usize,
-  pub end: usize,
-}
-
-impl Range {
-  pub fn new(start: usize, end: usize) -> Self {
-    Self { start, end }
-  }
-}
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Token {
   pub kind: TokenKind,

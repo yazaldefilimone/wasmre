@@ -1,5 +1,6 @@
 use lexer::tokens::TokenKind;
 
+mod bytes;
 mod cli;
 mod diagnostics;
 mod lexer;
