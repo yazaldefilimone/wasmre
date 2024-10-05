@@ -8,17 +8,24 @@ use nom::{
 use nom_leb128::leb128_u32;
 use num_traits::FromPrimitive as _;
 
-use super::section::SectionCode;
+use super::{section::SectionCode, types::FuncType};
 
+type TypeSection = Vec<FuncType>;
+
+fn decode_type_section(_input: &[u8]) -> IResult<&[u8], TypeSection> {
+  let func_types = vec![FuncType::default()];
+  Ok((&[], func_types))
+}
 #[derive(Debug, PartialEq, Eq)]
 pub struct Module {
   pub magic: String,
   pub version: u32,
+  pub type_section: Option<TypeSection>,
 }
 // https://webassembly.github.io/spec/core/binary/modules.html#binary-module
 impl Default for Module {
   fn default() -> Self {
-    Self { magic: "\0asm".to_string(), version: 1 }
+    Self { magic: "\0asm".to_string(), version: 1, type_section: None }
   }
 }
 
@@ -35,13 +42,12 @@ impl Module {
   fn decode(input: &[u8]) -> IResult<&[u8], Module> {
     let (input, _) = tag(b"\0asm")(input)?;
     let (input, version) = le_u32(input)?;
-    let module = Module { magic: "\0asm".into(), version };
+    let module = Module { magic: "\0asm".into(), version, ..Default::default() };
     Ok((input, module))
   }
 
   fn decode_section_header(&self, input: &[u8]) -> IResult<&[u8], (SectionCode, u32)> {
     let (input, (code, size)) = pair(le_u8, leb128_u32)(input)?;
-
     let section_code = SectionCode::from_u8(code);
 
     if section_code.is_none() {
@@ -56,7 +62,11 @@ impl Module {
       match self.decode_section_header(remaining) {
         Ok((input, (code, size))) => {
           let (rest, section_contents) = take(size)(input)?;
+
           match code {
+            SectionCode::Type => {
+              let (rest, types) = decode_type_section(section_contents)?;
+            }
             _ => todo!(),
           };
           remaining = rest;
